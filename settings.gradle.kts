@@ -10,4 +10,4 @@
 rootProject.name = "sbpm_solution"
 include("app")
 //include("app2")
-//include("lib")
+include("s_bpm")
