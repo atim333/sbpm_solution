@@ -1,28 +1,30 @@
 package sbpm_solution.bpms.sbpm.model
 
-import java.util.stream.Collector
 import java.util.stream.Collectors
 
-interface Subject : RootElement{
-    var name : String
-    val states : MutableList<State>
-    fun findState(stateId: String): State?{
-        return states.stream().filter{state: State->state.id.equals(stateId)}
+interface Subject : RootElement {
+    val name: String
+    val states: List<State>
+    fun findState(stateId: String): State? {
+        return states.stream()
+            .filter { state: State -> state.id.equals(stateId) }
             .findFirst()
             .orElse(null)
     }
 }
 
-interface State : BaseElement{
-    var name: String?
-    var isInital: Boolean
-    var isFinish: Boolean
-    var isTerminate: Boolean
-    val transitions: MutableList<Transition>
-    var groupRef: Reference<GroupState>?
 
-    fun getSubject(): Subject{
-        return processDefinition!!.findSubject(this)!!
+
+interface State : BaseElement {
+    val name: String
+    val isInitial: Boolean
+    val isFinish: Boolean
+    val isTerminate: Boolean
+    val transitions: List<Transition>
+    val groupRef: Reference<GroupState>?
+
+    fun getSubject(): Subject {
+        return processDefinition.findSubject(this)!!
     }
 
     fun getErrorTransition(): ErrorTransition?{
@@ -40,36 +42,42 @@ interface State : BaseElement{
     }
 }
 
+
+
 interface Transition : BaseElement {
-    var targetRef: Reference<State>
-    var sourceRef: Reference<State>
-    fun getState(): State?{
-        return targetRef?.resolvedReference()
+    val targetRef: Reference<State>
+    val sourceRef: Reference<State>
+    fun getState(): State{
+        return targetRef.resolvedReference()!!
     }
 }
 
 interface ErrorTransition: Transition
 
+sealed class TimerTransitionType {
+    class DateExpressionType(val expression: String) : TimerTransitionType()
+    class DurationExpressionType(val expression: String) : TimerTransitionType()
+}
+
 interface TimerTransition: Transition{
-    var dateException: String?
-    var durationException: String?
+    val expression: TimerTransitionType
+}
+
+sealed class ActionDefinition {
+    class ActionRef(val functionalActionRef: Reference<FunctionalAction>):ActionDefinition()
+    class ActionBody(val functionalAction: FunctionalAction):ActionDefinition()
 }
 
 interface FunctionalState: State {
-    var functionalAction: FunctionalAction?
-    var functionalActionRef: Reference<FunctionalAction>?
+    val  action: ActionDefinition
 
-    fun getAction(): FunctionalAction{
-        if (functionalAction!=null){
-            return functionalAction!!
+    fun getAction(): FunctionalAction {
+        return when(action) {
+            is ActionDefinition.ActionBody -> (action as ActionDefinition.ActionBody).functionalAction
+            is ActionDefinition.ActionRef  -> (action as ActionDefinition.ActionRef).functionalActionRef.resolvedReference()!!
         }
-        val ret = functionalActionRef!!.resolvedReference()
-        return ret!!
     }
 
-    fun actionIsRef(): Boolean{
-        return functionalActionRef != null
-    }
 
     fun getFunctionalTransitions(): List<FunctionalTransition>{
         val ret= transitions.stream()
@@ -81,39 +89,33 @@ interface FunctionalState: State {
 }
 
 interface FunctionalTransition: Transition {
-    var name: String?
-    val outputDataAssociation: MutableList<DataAssociation>
+    val name: String
+    val outputDataAssociation: List<DataAssociation>
 }
 
-interface SendSrate: State {
-    fun transitionSendExist(): Boolean{
-      val ret= transitions.stream()
-          .filter{transition-> transition is TransitionSend}
-          .findFirst()
-          .isPresent
-      return ret
-    }
+interface SendState: State {
 
-    fun getTransitionSend(): TransitionSend{
+    fun getTransitionSend(): TransitionSend?{
       val ret = transitions.stream()
           .filter{transition -> transition is TransitionSend}
           .map { transition-> transition as TransitionSend }
-          .findFirst().get()
+          .findFirst()
+          .orElse(null)
       return ret
     }
 }
 
 interface TransitionSend: Transition{
-    var messageDefinitionRef: Reference<MessageDefinition>?
-    var recientRef: Reference<Subject>?
-    val outputDataAssociation: MutableList<DataAssociation>
+    val messageDefinitionRef: Reference<MessageDefinition>
+    var recientRef: Reference<Subject>
+    val outputDataAssociation: List<DataAssociation>
 
     fun getMessageDefinition(): MessageDefinition{
-        return messageDefinitionRef!!.resolvedReference()!!
+        return messageDefinitionRef.resolvedReference()!!
     }
 
     fun getRecient(): Subject {
-        return recientRef!!.resolvedReference()!!
+        return recientRef.resolvedReference()!!
     }
 }
 
@@ -128,15 +130,12 @@ interface RecevivedState: State {
 }
 
 interface TransitionRecevid : Transition{
-    var messageDefinitionRef: Reference<MessageDefinition>
-    var senderRef: Reference<Subject>
-    val outDataAssociation: MutableList<DataAssociation>
+    val messageDefinitionRef: Reference<MessageDefinition>
+    val senderRef: Reference<Subject>
+    val outDataAssociation: List<DataAssociation>
 
-    fun getMessgeDefinition(): MessageDefinition? {
-        if (messageDefinitionRef != null){
-            messageDefinitionRef.resolvedReference()
-        }
-        return null
+    fun getMessgeDefinition(): MessageDefinition {
+         return  messageDefinitionRef.resolvedReference()!!
     }
 
     fun getSender(): Subject{
@@ -172,7 +171,7 @@ interface ForkState : State{
 interface ForkTransition
 
 interface GroupState: State {
-   var loopCharacteristics: LoopCharacteristics?
+   val loopCharacteristics: LoopCharacteristics?
 
    fun getStates(): List<State>{
        val subject= getSubject()
@@ -186,15 +185,12 @@ interface GroupState: State {
    fun initialState(): State{
        val grouStates= getStates()
        val ret = grouStates.stream()
-           .filter{state-> state.isInital}
+           .filter{state-> state.isInitial}
            .findFirst()
            .get()
        return ret
    }
    fun groupTransition(): GroupTransition?{
-       if (isFinish || isTerminate){
-          null
-       }
        val ret=transitions.stream()
            .filter{transition -> transition is GroupTransition}
            .map { transition -> transition as GroupTransition }

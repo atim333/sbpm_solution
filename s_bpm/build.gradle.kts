@@ -10,6 +10,17 @@ dependencies {
     // logger
 
     implementation("org.apache.commons:commons-lang3:3.8.1")
+    implementation("org.apache.commons:commons-lang3:3.8.1")
+    implementation("org.mvel:mvel2:2.4.4.Final")
+
+
+
+    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+    // Use the Kotlin JUnit integration.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+
 
 
 }

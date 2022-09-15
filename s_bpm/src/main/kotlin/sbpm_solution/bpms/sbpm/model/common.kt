@@ -1,17 +1,21 @@
 package sbpm_solution.bpms.sbpm.model
 
-interface DataAssociation : BaseElement{
-   var targetPath: String?
-   var target: String?
-   var sourcePath: String?
-   var sourceMapFunction: String?
+
+interface UserForm : RootElement {
 }
 
-interface MessageDefinition : BaseElement{
-    var name: String?
+interface DataAssociation : BaseElement {
+    val targetPath: String?
+    val target: String?
+    val sourcePath: String?
+    val sourceMapFunction: String?
 }
 
-interface LoopCharacteristics : BaseElement{
-    var loopVaribleName: String?
-    var loopExpression: String?
+interface MessageDefinition : RootElement {
+    val name: String
+}
+
+interface LoopCharacteristics : BaseElement {
+    val loopVariableName: String
+    val loopExpression: String
 }

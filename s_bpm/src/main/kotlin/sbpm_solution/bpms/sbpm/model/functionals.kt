@@ -1,20 +1,23 @@
 package sbpm_solution.bpms.sbpm.model
 
+import sbpm_solution.bpms.sbpm.decisiontable.DecisionTable
+
 interface FunctionalAction : RootElement {
-    var name : String
+    val name: String?
 }
 
-interface ServiceTask : FunctionalAction {
-    var specification : String?
-    var method: String?
+interface ServiceTaskAction : FunctionalAction {
+    val specification: String
+    val method: String
 }
 
-interface Script : FunctionalAction{
-    var body: String
+interface ScriptAction : FunctionalAction {
+    val body: String
 }
 
-interface DecisinonTable: FunctionalAction{
-    val table: MutableMap<String, Any?>
+interface DecisionTableAction : FunctionalAction {
+    val table: DecisionTable
 }
 
-interface ExternalTask: FunctionalAction
+interface ExternalTaskAction : FunctionalAction {
+}

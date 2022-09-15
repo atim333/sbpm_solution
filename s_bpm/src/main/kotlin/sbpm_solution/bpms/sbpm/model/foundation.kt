@@ -1,20 +1,18 @@
 package sbpm_solution.bpms.sbpm.model
 
-interface Reference<T> {
+
+interface Reference<V> {
     val id: String
-    fun resolvedReference(): T?
+    fun resolvedReference(): V?
 }
 
 interface BaseElement {
-   var id: String
-   var processDefinition: ProcessDefinition
+    val id: String?
+    val processDefinition: ProcessDefinition
 
-   fun <T> getReference(): Reference<T>? {
-       if (id.isNullOrBlank()){
-           return null
-       }
-       return processDefinition.creareReference(id)
-   }
+    fun <T> getReference(): Reference<T> {
+        return processDefinition.createReference(id!!)
+    }
 }
 
 interface RootElement : BaseElement
