@@ -6,8 +6,12 @@ interface ProcessDefinition : BaseElement {
     val name: String
     val version: String
 
+    val inputDataAssociations: List<DataAssociation>
+    val mainSubject: Reference<Subject>?
     val rootElements: List<RootElement>
 
+    // Отладчик !!
+    var bp: MutableSet<String>?
     fun <T> createReference(id: String): Reference<T>
 
     fun getSubjects(): List<Subject> {

@@ -1,19 +1,22 @@
 package sbpm_solution.bpms.sbpm.modelimpl
 
-import sbpm_solution.bpms.sbpm.model.BaseElement
-import sbpm_solution.bpms.sbpm.model.ProcessDefinition
-import sbpm_solution.bpms.sbpm.model.Reference
-import sbpm_solution.bpms.sbpm.model.RootElement
+import sbpm_solution.bpms.sbpm.model.*
 
 
 class ProcessDefinitionImpl(
-    override val name: String,
-    override val version: String,
-    override val rootElements: List<RootElement>
+
 ): BaseElement, ProcessDefinition {
     override val id: String?
         get() = name+":"+version
     override val processDefinition = this
+    override var name: String=""
+    override var version: String=""
+
+    override val inputDataAssociations: List<DataAssociation> = ArrayList()
+    override var mainSubject: Reference<Subject>? = null
+    override val rootElements: List<RootElement> = ArrayList()
+
+    override var bp: MutableSet<String>? = null
 
     private val localRef = hashMapOf<String, BaseElement>()
 

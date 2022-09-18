@@ -12,7 +12,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.8.1")
     implementation("org.apache.commons:commons-lang3:3.8.1")
     implementation("org.mvel:mvel2:2.4.4.Final")
-
+    implementation("com.jayway.jsonpath:json-path:2.4.0")
 
 
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")

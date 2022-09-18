@@ -58,7 +58,8 @@ class FunctionalStateImpl(
     isTerminate: Boolean,
     transitions: List<Transition>,
     groupRef: Reference<GroupState>?,
-    override val action: ActionDefinition
+    override val action: ActionDefinition,
+    override val inputDataAssociation: List<DataAssociation>
 ): StateImpl(processDefinition,id,name,isInitial,isFinish,isTerminate,transitions,groupRef),
     FunctionalState
 

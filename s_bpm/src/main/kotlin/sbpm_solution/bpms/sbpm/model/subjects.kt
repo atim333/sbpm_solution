@@ -11,6 +11,12 @@ interface Subject : RootElement {
             .findFirst()
             .orElse(null)
     }
+    fun initialState(): State? {
+        return states.stream()
+            .filter { state: State -> state.isInitial && state.groupRef == null }
+            .findFirst()
+            .orElse(null)
+    }
 }
 
 
@@ -70,7 +76,10 @@ sealed class ActionDefinition {
 
 interface FunctionalState: State {
     val  action: ActionDefinition
-
+    val inputDataAssociation: List<DataAssociation>
+    fun actionIsRef(): Boolean {
+       return action is ActionDefinition.ActionRef
+    }
     fun getAction(): FunctionalAction {
         return when(action) {
             is ActionDefinition.ActionBody -> (action as ActionDefinition.ActionBody).functionalAction
@@ -141,6 +150,10 @@ interface TransitionRecevid : Transition{
     fun getSender(): Subject{
         return senderRef.resolvedReference()!!
     }
+
+    fun EQ(senderId: String, messageId: String): Boolean {
+        return senderRef.id == senderId && messageDefinitionRef.id == messageId
+    }
 }
 
 interface JoinState : State {
@@ -156,7 +169,7 @@ interface JoinState : State {
     }
 }
 
-interface JoinTransition
+interface JoinTransition: Transition
 
 interface ForkState : State{
     fun getForkTransitions(): List<ForkTransition> {
@@ -168,7 +181,7 @@ interface ForkState : State{
     }
 }
 
-interface ForkTransition
+interface ForkTransition: Transition
 
 interface GroupState: State {
    val loopCharacteristics: LoopCharacteristics?
