@@ -1,4 +1,4 @@
-package sbpm_solution.bpms.sbpm.abstractMachine2
+package sbpm_solution.bpms.sbpm.abstractMachine
 
 
 class Debuger(val piid: String, val bp: Set<String>) {

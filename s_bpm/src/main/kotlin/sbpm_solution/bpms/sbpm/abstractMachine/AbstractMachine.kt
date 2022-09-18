@@ -1,4 +1,4 @@
-package sbpm_solution.bpms.sbpm.abstractMachine2
+package sbpm_solution.bpms.sbpm.abstractMachine
 
 import sbpm_solution.bpms.sbpm.model.*
 
