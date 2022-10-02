@@ -17,6 +17,13 @@ interface Subject : RootElement {
             .findFirst()
             .orElse(null)
     }
+
+    fun existEndState(): Boolean {
+        return states.stream()
+            .filter { state: State -> (state.isFinish || state.isTerminate) && state.groupRef == null }
+            .findFirst()
+            .isPresent
+   }
 }
 
 
@@ -60,13 +67,9 @@ interface Transition : BaseElement {
 
 interface ErrorTransition: Transition
 
-sealed class TimerTransitionType {
-    class DateExpressionType(val expression: String) : TimerTransitionType()
-    class DurationExpressionType(val expression: String) : TimerTransitionType()
-}
 
 interface TimerTransition: Transition{
-    val expression: TimerTransitionType
+    val expression: String
 }
 
 sealed class ActionDefinition {

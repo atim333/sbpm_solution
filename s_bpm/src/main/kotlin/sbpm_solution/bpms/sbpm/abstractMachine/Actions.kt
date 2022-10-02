@@ -20,19 +20,8 @@ internal object Actions {
                 val timerExpression = timerTransition.expression
                 val dt: LocalDateTime =
                     try {
-                        when (timerExpression) {
-                            is TimerTransitionType.DateExpressionType -> {
-                                val script = timerExpression.expression
-                                val obj = localContext.evalSctipt(script, context)
-                                Convertor.convert(obj, LocalDateTime::class.java)!!
-                            }
-                            is TimerTransitionType.DurationExpressionType -> {
-                                val script = timerExpression.expression
-                                val obj = localContext.evalSctipt(script, context)
-                                val duration = Convertor.convert(obj, Duration::class.java)!!
-                                LocalDateTime.from(duration.addTo(LocalDateTime.now()))
-                            }
-                        }
+                        val obj = localContext.evalSctipt(timerExpression, context)
+                        Convertor.convert(obj, LocalDateTime::class.java)!!
                     } catch (e: Throwable) {
                         val path = PathBuilder.getPath(timerTransition)
                         throw ScriptError2(path, e)

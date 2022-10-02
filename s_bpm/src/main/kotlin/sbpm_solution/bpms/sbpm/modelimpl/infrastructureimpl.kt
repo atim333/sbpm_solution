@@ -3,6 +3,7 @@ package sbpm_solution.bpms.sbpm.modelimpl
 import sbpm_solution.bpms.sbpm.model.*
 
 
+
 class ProcessDefinitionImpl(
 
 ): BaseElement, ProcessDefinition {
@@ -12,9 +13,9 @@ class ProcessDefinitionImpl(
     override var name: String=""
     override var version: String=""
 
-    override val inputDataAssociations: List<DataAssociation> = ArrayList()
+    override val inputDataAssociations: MutableList<DataAssociation> = ArrayList()
     override var mainSubject: Reference<Subject>? = null
-    override val rootElements: List<RootElement> = ArrayList()
+    override val rootElements: MutableList<RootElement> = ArrayList()
 
     override var bp: MutableSet<String>? = null
 
@@ -31,6 +32,7 @@ class ProcessDefinitionImpl(
 
     inner  class ReferenceImpl<V>(override val id: String) : Reference<V> {
         override fun resolvedReference(): V? {
+            @Suppress("UNCHECKED_CAST")
             return localRef[id] as V?
         }
 
